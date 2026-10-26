@@ -12,32 +12,46 @@ jobs:
         with:
           distribution: temurin
           java-version: 21
-      - name: Accept Android Licenses
+      - name: Accept Licenses
+        run: yes | sudo /usr/local/lib/android/sdk/cmdline-tools/latest/bin/sdkmanager --licenses || true
+      - name: Find where keystore is needed
         run: |
-          yes | sudo /usr/local/lib/android/sdk/cmdline-tools/latest/bin/sdkmanager --licenses || true
-          sudo /usr/local/lib/android/sdk/cmdline-tools/latest/bin/sdkmanager --install "platform-tools" "platforms;android-35" "build-tools;35.0.0" || true
+          echo "--- Searching keystore refs ---"
+          grep -R "debug.keystore" --include="*.gradle" --include="*.kts" . || echo "no ref found"
+          echo "--- Structure ---"
+          ls -la
+          ls -la battery-doctor 2>/dev/null || true
+          ls -la battery-doctor/battery-doctor 2>/dev/null || true
+      - name: Create debug keystore EVERYWHERE
+        run: |
+          gen() {
+            keytool -genkey -v -keystore "$1" -alias androiddebugkey -keyalg RSA -keysize 2048 -validity 10000 -storepass android -keypass android -dname "CN=Android Debug,O=Android,C=US"
+          }
+          mkdir -p ~/.android
+          gen ~/.android/debug.keystore
+          for d in . ./app ./battery-doctor ./battery-doctor/app ./battery-doctor/battery-doctor/app; do
+            if [ -d "$d" ]; then
+              echo "Generating in $d"
+              gen "$d/debug.keystore" || true
+              gen "$d/debugConfig.keystore" || true
+            fi
+          done
+          # Also copy to exact path from error log
+          cp ~/.android/debug.keystore ./debug.keystore || true
+          cp ./debug.keystore /home/runner/work/battery-doctor/battery-doctor/debug.keystore 2>/dev/null || true
+          find . -name "debug.keystore" -ls
       - name: Setup Gradle 9.3.1
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: 9.3.1
-      - name: Build Debug APK
+      - name: Build APK
         run: |
           chmod +x $(find . -name "gradlew" -type f 2>/dev/null) || true
-          echo "Project structure:"
-          ls -la
-          find . -maxdepth 4 -name "settings.gradle*" | head -10
-          if [ -f "battery-doctor/battery-doctor/gradlew" ]; then
-            cd battery-doctor/battery-doctor && ./gradlew assembleDebug --no-daemon
-          elif [ -f "battery-doctor/gradlew" ]; then
-            cd battery-doctor && ./gradlew assembleDebug --no-daemon
-          elif [ -f "./gradlew" ]; then
-            ./gradlew assembleDebug --no-daemon
-          else
-            if [ -d "battery-doctor/battery-doctor" ]; then cd battery-doctor/battery-doctor; else if [ -d "battery-doctor" ]; then cd battery-doctor; fi; fi
-            gradle assembleDebug --no-daemon
-          fi
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
+          if [ -f "battery-doctor/battery-doctor/gradlew" ]; then cd battery-doctor/battery-doctor && ./gradlew assembleDebug --no-daemon
+          elif [ -f "battery-doctor/gradlew" ]; then cd battery-doctor && ./gradlew assembleDebug --no-daemon
+          elif [ -f "./gradlew" ]; then ./gradlew assembleDebug --no-daemon
+          else gradle assembleDebug --no-daemon; fi
+      - uses: actions/upload-artifact@v4
         with:
           name: Battery-Doctor-APK
           path: "**/build/outputs/apk/debug/*.apk"

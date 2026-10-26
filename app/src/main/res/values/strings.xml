@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">Battery &amp; Charger Doctor</string>
+    <string name="app_subtitle">Protect &amp; Optimize Your Battery Health</string>
+    <string name="tools_header">Tools</string>
+    <string name="features_available">6 features available</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_stats">Stats</string>
+    <string name="nav_settings">Settings</string>
+    <string name="tool_full_battery_title">Full Battery Alarm</string>
+    <string name="tool_full_battery_subtitle">Notify when charged</string>
+    <string name="tool_theft_alarm_title">Theft Alarm</string>
+    <string name="tool_theft_alarm_subtitle">Anti-theft protection</string>
+    <string name="tool_charger_checker_title">Charger Checker</string>
+    <string name="tool_charger_checker_subtitle">Test charger &amp; cable</string>
+    <string name="tool_ai_scanner_title">AI Camera Scanner</string>
+    <string name="tool_ai_scanner_subtitle">Scan for battery issues</string>
+    <string name="tool_ai_doctor_title">AI Battery Doctor</string>
+    <string name="tool_ai_doctor_subtitle">AI diagnostics &amp; tips</string>
+    <string name="tool_shop_title">Original Charger Shop</string>
+    <string name="tool_shop_subtitle">Buy Original Chargers</string>
+    <string name="shop_banner_text">Fast charging • Original products • Cash on delivery - Your Number 01897040005</string>
+    <string name="buy_now">Buy Now</string>
+</resources>

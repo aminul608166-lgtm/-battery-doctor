@@ -1,0 +1,6 @@
+{
+  "name": "Battery & Charger Doctor",
+  "description": "Real-time battery health telemetry, full charge & unplug theft alarms, live wattage/amperage charger diagnostics, Gemini AI charger scanner & battery doctor, and Original Charger Shop with instant WhatsApp ordering.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

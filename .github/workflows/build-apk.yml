@@ -7,25 +7,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 21
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
-      - name: Setup Gradle 8.7
+      - name: Setup Gradle 9.3.1
         uses: gradle/actions/setup-gradle@v4
         with:
-          gradle-version: 8.7
-      - name: Make gradlew executable
-        run: chmod +x ./gradlew || true
+          gradle-version: 9.3.1
       - name: Build Debug APK
         run: |
+          chmod +x ./gradlew || true
           if [ -f "./gradlew" ]; then
-            ./gradlew assembleDebug --stacktrace --no-daemon
+            ./gradlew assembleDebug --no-daemon --stacktrace
           else
-            gradle assembleDebug --stacktrace --no-daemon
+            gradle assembleDebug --no-daemon --stacktrace
           fi
       - name: Upload APK
         uses: actions/upload-artifact@v4
@@ -34,3 +33,4 @@ jobs:
           path: |
             app/build/outputs/apk/debug/*.apk
             **/build/outputs/apk/debug/*.apk
+            battery-doctor/**/build/outputs/apk/debug/*.apk

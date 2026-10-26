@@ -11,11 +11,18 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
-      - name: Build with Wrapper
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: 8.7
+      - name: Build APK
         run: |
-          ls -la
-          chmod +x ./gradlew || chmod +x ./gradlew.bat || true
-          ./gradlew assembleDebug --stacktrace --no-daemon
+          if [ -f "./gradlew" ]; then
+            chmod +x ./gradlew
+            ./gradlew assembleDebug --no-daemon
+          else
+            echo "gradlew not found, using system gradle 8.7"
+            gradle assembleDebug --no-daemon
+          fi
       - uses: actions/upload-artifact@v4
         with:
           name: Battery-Doctor-APK
